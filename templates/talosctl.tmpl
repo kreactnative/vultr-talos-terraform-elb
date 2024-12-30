@@ -1,0 +1,67 @@
+#!/bin/bash
+talosctl gen config talos-proxmox-istio-cilium-cluster https://${load_balancer}:443 --config-patch @patch.yaml --force
+sleep 3
+%{ for node_host in node_map_masters ~}
+talosctl apply-config --insecure --nodes ${node_host} --file controlplane.yaml
+echo "Applied controller config to ${node_host}"
+%{endfor}
+%{ for node_host in node_map_workers ~}
+talosctl apply-config --insecure --nodes ${node_host} --file worker.yaml
+echo "Applied worker config to ${node_host}"
+%{endfor}
+
+# Bootstrap
+sleep 30
+talosctl bootstrap --nodes ${primary_controller} -e ${primary_controller} --talosconfig=./talosconfig
+echo "Started bootstrap process"
+sleep 30
+
+# Health check
+n=0
+retries=5
+until [ "$n" -ge "$retries" ]; do
+  if talosctl --talosconfig=./talosconfig --nodes ${primary_controller} -e ${primary_controller} health; then
+    break
+  else
+    n=$((n+1))
+    sleep 5
+  fi
+done
+
+# Update kubeconfig
+talosctl kubeconfig --nodes ${primary_controller} -e ${primary_controller} --talosconfig=./talosconfig --force
+echo "Updated kubeconfig"
+echo "Successfully created cluster"
+
+
+# create namespace with permission label
+kubectl create ns monitoring
+kubectl label ns monitoring \                                                                                                                                                                                                               ✔ ╱ at admin@talos-proxmox-istio-cilium-cluster 󱃾 ╱ at 10:24:26  
+  pod-security.kubernetes.io/audit=privileged \
+  pod-security.kubernetes.io/enforce=privileged \
+  pod-security.kubernetes.io/warn=privileged
+
+kubectl create ns istio-system
+kubectl label ns istio-system \                                                                                                                                                                                                               ✔ ╱ at admin@talos-proxmox-istio-cilium-cluster 󱃾 ╱ at 10:24:26  
+  pod-security.kubernetes.io/audit=privileged \
+  pod-security.kubernetes.io/enforce=privileged \
+  pod-security.kubernetes.io/warn=privileged
+
+kubectl create ns nfs-provisioner
+kubectl label ns nfs-provisioner \                                                                                                                                                                                                               ✔ ╱ at admin@talos-proxmox-istio-cilium-cluster 󱃾 ╱ at 10:24:26  
+  pod-security.kubernetes.io/audit=privileged \
+  pod-security.kubernetes.io/enforce=privileged \
+  pod-security.kubernetes.io/warn=privileged
+
+
+kubectl create ns cert-manager
+kubectl label ns cert-manager \                                                                                                                                                                                                               ✔ ╱ at admin@talos-proxmox-istio-cilium-cluster 󱃾 ╱ at 10:24:26  
+  pod-security.kubernetes.io/audit=privileged \
+  pod-security.kubernetes.io/enforce=privileged \
+  pod-security.kubernetes.io/warn=privileged
+
+
+# install reflector/metrics-server
+kubectl apply -f https://github.com/emberstack/kubernetes-reflector/releases/latest/download/reflector.yaml
+kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
+kubectl patch deployment metrics-server -n kube-system --type 'json' -p '[{"op": "add", "path": "/spec/template/spec/containers/0/args/-", "value": "--kubelet-insecure-tls"}]'
