@@ -3,16 +3,11 @@ machine:
   #type: controlplane
   sysctls:
     net.ipv6.conf.all.forwarding: 1
-  network:
-    interfaces:
-      - deviceSelector:
-          busPath: 0*
-        dhcp: true
-        dhcpOptions:
-          ipv6: true
   kubelet:
     extraConfig:
       maxPods: 512
+  install:
+    disk: /dev/vda
 cluster:
   allowSchedulingOnControlPlanes: true
   network:
@@ -25,13 +20,7 @@ cluster:
     cni:
       name: none
   proxy:
-    disabled: true
-  controllerManager:
-    extraArgs:
-      bind-address: 0.0.0.0
-  scheduler:
-    extraArgs:
-      bind-address: 0.0.0.0      
+    disabled: true  
   inlineManifests:
       - name: cilium-install
         contents: |

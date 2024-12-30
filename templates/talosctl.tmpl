@@ -1,5 +1,5 @@
 #!/bin/bash
-talosctl gen config talos-proxmox-istio-cilium-cluster https://${load_balancer}:443 --config-patch @patch.yaml --force
+talosctl gen config talos-vultr-istio-cilium-cluster https://${load_balancer}:443 --config-patch @patch.yaml --force
 sleep 3
 %{ for node_host in node_map_masters ~}
 talosctl apply-config --insecure --nodes ${node_host} --file controlplane.yaml
