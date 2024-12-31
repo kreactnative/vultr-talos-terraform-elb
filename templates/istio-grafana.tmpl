@@ -1,0 +1,21 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: grafana-vs
+  namespace: monitoring
+spec:
+  gateways:
+    - "istio-system/${gateway_name}"
+  hosts:
+    - "grafana.vultr.${domain_name}"
+  http:
+    - match:
+        - uri:
+            prefix: /
+      rewrite:
+        uri: /
+      route:
+        - destination:
+            host: kube-prometheus-stack-grafana
+            port:
+              number: 80

@@ -44,3 +44,4 @@ talosconfig
 worker.yaml
 templates/cilium-lb-ip.tmpl
 templates/istio-gateway.tmpl
+kubernetes/istio-grafana.yaml

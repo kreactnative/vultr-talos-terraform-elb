@@ -1,0 +1,93 @@
+kubeEtcd:
+  enabled: true
+  service:
+    enabled: true
+prometheus:
+  enabled: true
+  prometheusSpec:
+    storageSpec:
+      volumeClaimTemplate:
+        spec:
+          storageClassName: nfs-client
+          accessModes: ["ReadWriteOnce"]
+          resources:
+            requests:
+              storage: 10Gi
+grafana:
+  sidecar:
+    dashboards:
+      enabled: true
+      defaultFolderName: "General"
+      label: grafana_dashboard
+      labelValue: "1"
+      folderAnnotation: grafana_folder
+      searchNamespace: ALL
+      provider:
+        foldersFromFilesStructure: true
+  adminPassword: NAT123###
+  additionalDataSources:
+    - name: Loki
+      type: loki
+      isDefault: false
+      access: proxy
+      url: http://loki.monitoring:3100
+  plugins:
+    - grafana-piechart-panel
+    - grafana-worldmap-panel
+    - jdbranham-diagram-panel
+  dashboardProviders:
+    dashboardproviders.yaml:
+      apiVersion: 1
+      providers:
+        - name: "grafana-dashboards-kubernetes"
+          orgId: 1
+          folder: "Kubernetes"
+          type: file
+          disableDeletion: true
+          editable: true
+          options:
+            path: /var/lib/grafana/dashboards/grafana-dashboards-kubernetes
+        - name: "grafana-dashboards-loki"
+          orgId: 1
+          folder: "Loki"
+          type: file
+          disableDeletion: true
+          editable: true
+          options:
+            path: /var/lib/grafana/dashboards/grafana-dashboards-loki
+        - name: "grafana-dashboards-istio"
+          orgId: 1
+          folder: "Istio"
+          type: file
+          disableDeletion: true
+          editable: true
+          options:
+            path: /var/lib/grafana/dashboards/grafana-dashboards-istio
+  dashboards:
+    grafana-dashboards-kubernetes:
+      k8s-system-api-server:
+        url: https://raw.githubusercontent.com/dotdc/grafana-dashboards-kubernetes/master/dashboards/k8s-system-api-server.json
+        token: ""
+      k8s-system-coredns:
+        url: https://raw.githubusercontent.com/dotdc/grafana-dashboards-kubernetes/master/dashboards/k8s-system-coredns.json
+        token: ""
+      k8s-views-global:
+        url: https://raw.githubusercontent.com/dotdc/grafana-dashboards-kubernetes/master/dashboards/k8s-views-global.json
+        token: ""
+      k8s-views-namespaces:
+        url: https://raw.githubusercontent.com/dotdc/grafana-dashboards-kubernetes/master/dashboards/k8s-views-namespaces.json
+        token: ""
+      k8s-views-nodes:
+        url: https://raw.githubusercontent.com/dotdc/grafana-dashboards-kubernetes/master/dashboards/k8s-views-nodes.json
+        token: ""
+      k8s-views-pods:
+        url: https://raw.githubusercontent.com/dotdc/grafana-dashboards-kubernetes/master/dashboards/k8s-views-pods.json
+        token: ""
+    grafana-dashboards-loki:
+      loki-log:
+        url: https://raw.githubusercontent.com/kreactnative/grafana-dashboard/arm-layer-stack/loki-log.json
+        token: ""
+    grafana-dashboards-istio:
+      loki-dashboard-istio:
+        url: https://raw.githubusercontent.com/kreactnative/grafana-dashboard/arm-layer-stack/loki-istio.json
+        token: ""

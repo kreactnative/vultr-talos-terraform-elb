@@ -43,7 +43,35 @@ resource "local_file" "istio_gateway_config" {
   filename = "kubernetes/istio-gateway.yaml"
 }
 
+resource "local_file" "cert_manager_config" {
+  depends_on = [
+    vultr_instance.control_plane_instance,
+  ]
+  content = templatefile("${path.root}/templates/cert-manager-domain.tmpl",
+    {
+      gateway_name     = "vultr-gateway",
+      domain_name      = var.cloudflare_domain_name,
+      secret_name      = "vultr-domain-cert-prd",
+      cloudflare_token = base64encode(var.cloudflare_api_key)
+    }
+  )
+  filename = "kubernetes/cert-manager-domain.yaml"
+}
 
+resource "local_file" "istio_grafana_config" {
+  depends_on = [
+    vultr_instance.control_plane_instance,
+  ]
+  content = templatefile("${path.root}/templates/istio-grafana.tmpl",
+    {
+      gateway_name     = "vultr-gateway",
+      domain_name      = var.cloudflare_domain_name,
+      secret_name      = "vultr-domain-cert-prd",
+      cloudflare_token = base64encode(var.cloudflare_api_key)
+    }
+  )
+  filename = "kubernetes/istio-grafana.yaml"
+}
 
 resource "null_resource" "create_cluster" {
   depends_on = [local_file.talosctl_config]

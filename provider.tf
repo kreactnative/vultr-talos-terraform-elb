@@ -25,7 +25,7 @@ provider "cloudflare" {
 
 resource "null_resource" "cleanup" {
   provisioner "local-exec" {
-    command     = "rm -f talos_setup.sh talosconfig worker.yaml controlplane.yaml && rm -rf kubernetes/cilium-lb-ip.yaml kubernetes/istio-gateway.yaml"
+    command     = "rm -f talos_setup.sh talosconfig worker.yaml controlplane.yaml && rm -rf kubernetes/cilium-lb-ip.yaml kubernetes/istio-gateway.yaml kubernetes/cert-manager-domain.yaml kubernetes/istio-grafana.yaml"
     working_dir = path.root
   }
 }
