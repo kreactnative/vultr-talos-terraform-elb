@@ -48,3 +48,6 @@ kubernetes/istio-grafana.yaml
 kubernetes/istio-gateway.yaml
 kubernetes/cert-manager-domain.yaml
 kubernetes/cilium-lb-ip.yaml
+backups/
+terraform.tfvars.example
+backups/cert-managet-vultr-secret.yaml
