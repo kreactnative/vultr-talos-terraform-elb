@@ -1,0 +1,8 @@
+vult_api_key           = "V4L35ION2MVRX6SDSSA35IPTJLETZW4OE72XQ"
+region                 = "sgp"
+talos_image_version    = "v1.9.0"
+cloudflare_api_key     = "fO2N8RIvqiivlmJt8FnDwqweq66mNValtl8y3JbMBw"
+cloudflare_domain_name = "example.com"
+
+#output
+# https://grafana.vultr.example.com
