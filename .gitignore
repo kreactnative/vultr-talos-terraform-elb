@@ -42,3 +42,5 @@ haproxy.cfg
 talos_setup.sh
 talosconfig
 worker.yaml
+templates/cilium-lb-ip.tmpl
+templates/istio-gateway.tmpl
