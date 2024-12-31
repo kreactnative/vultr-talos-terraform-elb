@@ -1,6 +1,6 @@
 #!/bin/bash
 talosctl gen config talos-vultr-istio-cilium-cluster https://${load_balancer}:443 --config-patch @patch.yaml --force
-sleep 3
+sleep 60
 %{ for node_host in node_map_masters ~}
 talosctl apply-config --insecure --nodes ${node_host} --file controlplane.yaml
 echo "Applied controller config to ${node_host}"
@@ -11,20 +11,20 @@ echo "Applied worker config to ${node_host}"
 %{endfor}
 
 # Bootstrap
-sleep 30
+sleep 60
 talosctl bootstrap --nodes ${primary_controller} -e ${primary_controller} --talosconfig=./talosconfig
 echo "Started bootstrap process"
-sleep 30
+sleep 60
 
 # Health check
 n=0
-retries=5
+retries=10
 until [ "$n" -ge "$retries" ]; do
   if talosctl --talosconfig=./talosconfig --nodes ${primary_controller} -e ${primary_controller} health; then
     break
   else
     n=$((n+1))
-    sleep 5
+    sleep 3
   fi
 done
 

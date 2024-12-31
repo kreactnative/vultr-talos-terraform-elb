@@ -8,7 +8,7 @@ resource "local_file" "talosctl_config" {
     {
       load_balancer      = vultr_load_balancer.talos_lb.ipv4,
       node_map_masters   = tolist(vultr_instance.control_plane_instance.*.main_ip),
-      node_map_workers   = tolist(vultr_instance.worker_instance.*.main_ip)
+      node_map_workers   = tolist(vultr_instance.worker_instance.*.main_ip),
       primary_controller = vultr_instance.control_plane_instance[0].main_ip
     }
   )
@@ -22,22 +22,22 @@ resource "local_file" "cilium_lb_ip_config" {
   ]
   content = templatefile("${path.root}/templates/cilium-lb-ip.tmpl",
     {
-      master_ipv4 = vultr_instance.control_plane_instance[0].main_ip
+      master_ipv4 = vultr_instance.control_plane_instance[0].main_ip,
       master_ipv6 = vultr_instance.control_plane_instance[0].v6_main_ip
     }
   )
   filename = "kubernetes/cilium-lb-ip.yaml"
 }
 
-resource "local_file" "cilium_lb_ip_config" {
+resource "local_file" "istio_gateway_config" {
   depends_on = [
     vultr_instance.control_plane_instance,
   ]
   content = templatefile("${path.root}/templates/istio-gateway.tmpl",
     {
-      gateway     = "vultr-gateway"
-      domain_name = var.cloudflare_domain_name
-      secret_name = "vultr-domain-cert-prd"
+      gateway_name = "vultr-gateway",
+      domain_name  = var.cloudflare_domain_name,
+      secret_name  = "vultr-domain-cert-prd"
     }
   )
   filename = "kubernetes/istio-gateway.yaml"
