@@ -53,7 +53,6 @@ kubectl label ns nfs-provisioner \
   pod-security.kubernetes.io/enforce=privileged \
   pod-security.kubernetes.io/warn=privileged
 
-
 kubectl create ns cert-manager
 kubectl label ns cert-manager \
   pod-security.kubernetes.io/audit=privileged \
@@ -71,3 +70,13 @@ kubectl apply -f kubernetes/cilium-lb-ip.yaml -n kube-system
 
 # install istio dual-stack 
 istioctl install -y -f kubernetes/istio-operator.yaml
+
+# install istio-gateway
+kubectl apply -f kubernetes/istio-gateway.yaml
+
+# install cert-manager
+helm repo add jetstack https://charts.jetstack.io
+helm repo update
+helm upgrade --install cert-manager jetstack/cert-manager --namespace cert-manager --create-namespace --set crds.enabled=true --set 'extraArgs={--dns01-recursive-nameservers-only,--dns01-recursive-nameservers=8.8.8.8:53\,1.1.1.1:53}'
+
+# install cert-manager-ssl

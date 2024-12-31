@@ -37,7 +37,7 @@ resource "local_file" "cilium_lb_ip_config" {
     {
       gateway     = "vultr-gateway"
       domain_name = var.cloudflare_domain_name
-      ssl_name    = "vultr-domain-cert-prd"
+      secret_name = "vultr-domain-cert-prd"
     }
   )
   filename = "kubernetes/istio-gateway.yaml"
