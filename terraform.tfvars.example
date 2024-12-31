@@ -1,6 +1,13 @@
 vult_api_key           = "V4L35ION2MVRX6SDSSA35IPTJLETZW4OE72XQ"
 region                 = "sgp"
 talos_image_version    = "v1.9.0"
+
+control_plane_count = 2
+control_plane_plan  = "vc2-2c-4gb"
+
+worker_count = 1
+worker_plan  = "vc2-1c-1gb"
+
 cloudflare_api_key     = "fO2N8RIvqiivlmJt8FnDwqweq66mNValtl8y3JbMBw"
 cloudflare_domain_name = "example.com"
 

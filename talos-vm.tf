@@ -1,6 +1,6 @@
 resource "vultr_instance" "control_plane_instance" {
-  count       = 2
-  plan        = "vc2-2c-4gb"
+  count       = var.control_plane_count
+  plan        = var.control_plane_plan
   region      = var.region
   iso_id      = vultr_iso_private.talos_iso.id
   label       = "talos-control-plane-${count.index}"
@@ -9,8 +9,8 @@ resource "vultr_instance" "control_plane_instance" {
   enable_ipv6 = true
 }
 resource "vultr_instance" "worker_instance" {
-  count       = 1
-  plan        = "vc2-1c-1gb"
+  count       = var.worker_count
+  plan        = var.worker_plan
   region      = var.region
   iso_id      = vultr_iso_private.talos_iso.id
   label       = "talos-worker-${count.index}"
