@@ -45,3 +45,6 @@ worker.yaml
 templates/cilium-lb-ip.tmpl
 templates/istio-gateway.tmpl
 kubernetes/istio-grafana.yaml
+kubernetes/istio-gateway.yaml
+kubernetes/cert-manager-domain.yaml
+kubernetes/cilium-lb-ip.yaml

@@ -5,14 +5,11 @@ kubeEtcd:
 prometheus:
   enabled: true
   prometheusSpec:
-    storageSpec:
-      volumeClaimTemplate:
-        spec:
-          storageClassName: nfs-client
-          accessModes: ["ReadWriteOnce"]
-          resources:
-            requests:
-              storage: 10Gi
+    image:
+      registry: quay.io
+      repository: prometheus/prometheus
+      sha: ""
+      tag: v3.0.0
 grafana:
   sidecar:
     dashboards:
